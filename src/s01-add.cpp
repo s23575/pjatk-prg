@@ -1,9 +1,8 @@
 #include <iostream>
 #include <string>
 
-auto main(int argc , char* argv[]) -> int
+auto main(int argc, char* argv[]) -> int
 {
-
     if (argc == 0) {
         return 1;
     }
@@ -13,5 +12,4 @@ auto main(int argc , char* argv[]) -> int
     auto const b = std::stoi(argv[2]);
     std::cout << (a + b) << "\n";
     return 0;
-
 }

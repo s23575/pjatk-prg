@@ -9,17 +9,15 @@
 
 auto main() -> int
 {
+    auto name = std::string{};
 
-   auto name = std::string{};
-
-   do {
-
+    do {
         std::cout << "password:";
         std::getline(std::cin, name);
-        
+
     } while (name != "student");
 
     std::cout << "ok!\n";
 
-   return 0;
+    return 0;
 }
