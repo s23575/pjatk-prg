@@ -21,11 +21,11 @@ int main(int argc, char* argv[])
     for (numer_argumentu = 1; numer_argumentu < 3; numer_argumentu++) {
         argument = argv[numer_argumentu];
         if (argument.at(0) == '-' && argument.length() == 2) {
-            if (argument.at(1) == 'n' && opcja_l == 0) {
+            if (argument.at(1) == 'n' && opcja_n == 0 && opcja_l == 0) {
                 opcja_n = true;
             } else if (argument.at(1) == 'r' && numer_argumentu == 1) {
                 opcja_r = true;
-            } else if (argument.at(1) == 'l' && opcja_n == 0) {
+            } else if (argument.at(1) == 'l' && opcja_l == 0 && opcja_n == 0) {
                 opcja_l = true;
             } else {
                 break;
