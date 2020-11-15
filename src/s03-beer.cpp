@@ -1,36 +1,37 @@
 #include <iostream>
 
-using namespace std;
-
 int main(int argc, char* argv[])
 {
-    int a;
+    auto liczba_butelek = int{};
 
     if (argc > 1) {
         try {
-            a = stoi(argv[1]);
-        } catch (invalid_argument&) {
-            cout << "Błąd! Argument podany w wierszu poleceń nie jest dodatnią "
-                    "liczbą całkowitą.\n";
+            liczba_butelek = std::stoi(argv[1]);
+        } catch (std::invalid_argument&) {
+            std::cerr
+                << "Błąd! Argument podany w wierszu poleceń nie jest dodatnią "
+                   "liczbą całkowitą.\n";
             return 1;
         }
     } else {
-        a = 99;
+        liczba_butelek = 99;
     }
 
-    if (a < 0) {
-        cout << "Błąd! Podana liczba całkowita nie jest dodatnia.\n";
+    if (liczba_butelek < 0) {
+        std::cerr << "Błąd! Podana liczba całkowita nie jest dodatnia.\n";
         return 1;
-    } else {
-        for (int b = a; b >= 1; b--) {
-            cout << b << " bottles of beer on the wall, " << b
-                 << " bottles of beer.\nTake one down, pass it around, "
-                 << b - 1 << " bottles of beer on the wall...\n";
-        }
     }
-    cout << "No more bottles of beer on the wall, no more bottles of beer.\nGo "
-            "to the store and buy some more, "
-         << a << "bottles of beer on the wall...\n";
+
+    for (auto i = liczba_butelek; i >= 1; i--) {
+        std::cout << i << " bottles of beer on the wall, " << i
+                  << " bottles of beer.\nTake one down, pass it around, "
+                  << i - 1 << " bottles of beer on the wall...\n";
+    }
+
+    std::cout
+        << "No more bottles of beer on the wall, no more bottles of beer.\nGo "
+           "to the store and buy some more, "
+        << liczba_butelek << " bottles of beer on the wall...\n";
 
     return 0;
 }

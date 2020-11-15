@@ -16,16 +16,17 @@ int main(int argc, char* argv[])
     auto opcja_r = bool{};
     auto opcja_l = bool{};
 
-    auto numer_argumentu = int{1};
+    auto numer_argumentu = int{};
 
-    for (numer_argumentu = 1; numer_argumentu < 3; numer_argumentu++) {
+    for (numer_argumentu = 1; numer_argumentu < liczba_argumentow;
+         numer_argumentu++) {
         argument = argv[numer_argumentu];
         if (argument.at(0) == '-' && argument.length() == 2) {
-            if (argument.at(1) == 'n' && opcja_l == 0) {
+            if (argument.at(1) == 'n') {
                 opcja_n = true;
-            } else if (argument.at(1) == 'r' && numer_argumentu == 1) {
+            } else if (argument.at(1) == 'r') {
                 opcja_r = true;
-            } else if (argument.at(1) == 'l' && opcja_n == 0) {
+            } else if (argument.at(1) == 'l') {
                 opcja_l = true;
             } else {
                 break;

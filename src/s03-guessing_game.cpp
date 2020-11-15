@@ -1,45 +1,47 @@
 #include <iostream>
 #include <random>
+#include <string>
 
-using namespace std;
+auto ask_user_for_integer(std::string prompt) -> int
+{
+    std::cout << prompt;
+    auto liczba = std::string{};
+    std::getline(std::cin, liczba);
+
+    try {
+        return std::stoi(liczba);
+    } catch (std::invalid_argument&) {
+        std::cerr << "Błąd! Nie podano liczby całkowitej - spróbuj ponownie.\n";
+        return ask_user_for_integer("Podaj liczbę: ");
+    }
+}
 
 int main()
 {
-    random_device rd;
-    uniform_int_distribution<int> a(1, 100);
+    std::random_device rd;
+    std::uniform_int_distribution<int> losowa_liczba(1, 100);
 
-    int b = a(rd);
-    int c;
+    auto wylosowana_liczba = int{losowa_liczba(rd)};
 
-    cout << "Zgadnij wylosowaną liczbę całkowitą od 1 do 100 - podaj liczbę:\n";
+    std::cout << "Zgadnij wylosowaną liczbę całkowitą od 1 do 100!\n";
 
+    auto liczba_uzytkownika = int{};
 
     do {
-        cin >> c;
+        liczba_uzytkownika = ask_user_for_integer("Podaj liczbę: ");
 
-        if (!cin) {
-            break;
-
+        if (liczba_uzytkownika > wylosowana_liczba) {
+            std::cout << "Podana liczba jest za duża!\n";
         } else {
-            if (c > b) {
-                cout << "Podana liczba jest za duża!\n";
-            } else {
-                if (c < b) {
-                    cout << "Podana liczba jest za mała!\n";
-                }
+            if (liczba_uzytkownika < wylosowana_liczba) {
+                std::cout << "Podana liczba jest za mała!\n";
             }
         }
 
-        cout << "Zgadnij jeszcze raz:\n";
+    } while (liczba_uzytkownika != wylosowana_liczba);
 
-    } while (c != b);
-
-    if (!cin) {
-        cout << "Błąd! Nie podano liczby całkowitej.\n";
-
-    } else {
-        cout << "Zgadłeś! Wylosowana liczba to: " << b << "\n";
-    }
+    std::cout << "Zgadłeś! Wylosowana liczba to: " << wylosowana_liczba
+              << ".\n";
 
     return 0;
 }

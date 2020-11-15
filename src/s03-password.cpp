@@ -1,23 +1,23 @@
-/*
- * Ask the user for their credentials. Allow them to decline.
- */
-
-
 #include <iostream>
 #include <string>
 
-
-auto main() -> int
+int main(int argc, char* argv[])
 {
-    auto name = std::string{};
+    if (argc == 1) {
+        std::cerr << "Błąd! W wierszu poleceń nie podano argumentu (hasła).\n";
+        return 1;
+    }
+
+    auto haslo             = std::string{argv[1]};
+    auto haslo_uzytkownika = std::string{};
 
     do {
-        std::cout << "password:";
-        std::getline(std::cin, name);
+        std::cout << "Podaj hasło: ";
+        std::getline(std::cin, haslo_uzytkownika);
 
-    } while (name != "student");
+    } while (haslo_uzytkownika != haslo);
 
-    std::cout << "ok!\n";
+    std::cout << "Hasło prawidłowe!\n";
 
     return 0;
 }

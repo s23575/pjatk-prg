@@ -1,34 +1,31 @@
 #include <iostream>
 
-using namespace std;
-
 int main(int argc, char* argv[])
 {
     if (argc == 1) {
-        cout << "Błąd! W wierszu poleceń nie podano argumentu (liczby).\n";
+        std::cerr << "Błąd! W wierszu poleceń nie podano argumentu (liczby).\n";
         return 1;
     }
 
-    int a;
+    auto liczba = int{};
 
     try {
-        a = stoi(argv[1]);
-    } catch (invalid_argument&) {
-        cout << "Błąd! Argument podany w wierszu poleceń nie jest liczbą.\n";
+        liczba = std::stoi(argv[1]);
+    } catch (std::invalid_argument&) {
+        std::cerr
+            << "Błąd! Argument podany w wierszu poleceń nie jest liczbą.\n";
         return 1;
     }
 
-    int n;
-
-    for (n = 1; n <= a; n++) {
-        cout << n << " ";
-        if (n % 3 == 0) {
-            cout << "Fizz";
+    for (auto i = 1; i <= liczba; i++) {
+        std::cout << i << " ";
+        if (i % 3 == 0) {
+            std::cout << "Fizz";
         }
-        if (n % 5 == 0) {
-            cout << "Buzz";
+        if (i % 5 == 0) {
+            std::cout << "Buzz";
         }
-        cout << "\n";
+        std::cout << "\n";
     }
 
     return 0;
