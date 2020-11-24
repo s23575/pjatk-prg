@@ -24,6 +24,6 @@ struct Student {
     auto to_string() const -> std::string;
 };
 
-}
+}  // namespace s23575
 
 #endif
