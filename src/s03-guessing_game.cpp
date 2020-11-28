@@ -20,8 +20,9 @@ int main()
 
     std::cout << "Zgadnij wylosowaną liczbę całkowitą od 1 do 100!\n";
 
-    auto liczba_uzytkownika = int{}, liczba_blednych_prob = int{},
-         liczba_prob = int{};
+    auto liczba_uzytkownika   = int{};
+    auto liczba_blednych_prob = int{};
+    auto liczba_prob          = int{};
 
     do {
         try {
