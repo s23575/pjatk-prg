@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 
     for (auto i = size_t{0}; i < operands_to_print.size(); ++i) {
         std::cout << operands_to_print.at(i);
-        if (i + 1 == operands_to_print.size()) {
+        if (i + 1 != operands_to_print.size()) {
             std::cout << separator;
         }
     }
