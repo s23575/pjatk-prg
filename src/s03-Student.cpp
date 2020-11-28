@@ -30,7 +30,7 @@ auto s23575::Student::to_string() const -> std::string
 
 auto main() -> int
 {
-    auto student = s23575::Student("Maciej", "Zagórski", "s23575", 1, 3.25);
+    auto student = s23575::Student("Jan", "Kowalski", "s12345", 1, 3.25);
 
     std::cout << student.to_string() << "\n";
 

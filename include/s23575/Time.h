@@ -25,7 +25,7 @@ struct Czas {
     auto next_minute() -> void;
     auto next_second() -> void;
 
-    auto validate_time() -> int;
+    auto validate_time() -> void;
 
     auto time_of_day() const -> Time_of_day;
     auto to_string(Time_of_day) const -> std::string;

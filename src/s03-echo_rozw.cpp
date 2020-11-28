@@ -10,6 +10,10 @@ int main(int argc, char* argv[])
         return 1;
     }
 
+    auto args = std::vector<std::string>{};
+    std::copy(argv + 1, argv + argc, std::back_inserts(args));
+
+
     auto argument = std::string{};
 
     auto opcja_n = bool{};

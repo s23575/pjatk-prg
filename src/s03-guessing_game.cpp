@@ -8,12 +8,7 @@ auto ask_user_for_integer(std::string prompt) -> int
     auto liczba = std::string{};
     std::getline(std::cin, liczba);
 
-    try {
-        return std::stoi(liczba);
-    } catch (std::invalid_argument&) {
-        std::cerr << "Błąd! Nie podano liczby całkowitej - spróbuj ponownie.\n";
-        return ask_user_for_integer("Podaj liczbę: ");
-    }
+    return std::stoi(liczba);
 }
 
 int main()
@@ -21,14 +16,29 @@ int main()
     std::random_device rd;
     std::uniform_int_distribution<int> losowa_liczba(1, 100);
 
-    auto wylosowana_liczba = int{losowa_liczba(rd)};
+    auto const wylosowana_liczba = losowa_liczba(rd);
 
     std::cout << "Zgadnij wylosowaną liczbę całkowitą od 1 do 100!\n";
 
-    auto liczba_uzytkownika = int{};
+    auto liczba_uzytkownika = int{}, liczba_blednych_prob = int{},
+         liczba_prob = int{};
 
     do {
-        liczba_uzytkownika = ask_user_for_integer("Podaj liczbę: ");
+        try {
+            liczba_uzytkownika = ask_user_for_integer("Podaj liczbę: ");
+        } catch (std::invalid_argument&) {
+            liczba_blednych_prob = liczba_blednych_prob + 1;
+            if (liczba_blednych_prob < 3) {
+                std::cerr << "Błąd! Nie podano liczby całkowitej - spróbuj "
+                             "ponownie.\n";
+                continue;
+            } else {
+                std::cerr
+                    << "Błąd! Nie podano liczby całkowitej zbyt wiele razy.\n";
+                return 0;
+            }
+        }
+        liczba_blednych_prob = 0;
 
         if (liczba_uzytkownika > wylosowana_liczba) {
             std::cout << "Podana liczba jest za duża!\n";
@@ -38,10 +48,19 @@ int main()
             }
         }
 
+        liczba_prob = liczba_prob + 1;
+        if (liczba_prob == 100) {
+            break;
+        }
+
     } while (liczba_uzytkownika != wylosowana_liczba);
 
-    std::cout << "Zgadłeś! Wylosowana liczba to: " << wylosowana_liczba
-              << ".\n";
+    if (liczba_prob == 100) {
+        std::cout << "Nie udało się - zbyt wiele nieudanych prób.\n";
+    } else {
+        std::cout << "Zgadłeś! Wylosowana liczba to: " << wylosowana_liczba
+                  << ".\n";
+    }
 
     return 0;
 }

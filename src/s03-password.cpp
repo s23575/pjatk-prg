@@ -8,7 +8,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    auto haslo             = std::string{argv[1]};
+    auto const haslo       = argv[1];
     auto haslo_uzytkownika = std::string{};
 
     do {
