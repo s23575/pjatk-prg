@@ -53,11 +53,13 @@ auto s23575::Czas::validate_time() -> void
 
 auto s23575::Czas::to_string() const -> std::string
 {
-    std::cout << std::setw(2) << std::setfill('0') << godzina << ":"
-              << std::setw(2) << std::setfill('0') << minuta << ":"
-              << std::setw(2) << std::setfill('0') << sekunda;
+    auto out = std::ostringstream{};
 
-    return std::string();
+    out << std::setw(2) << std::setfill('0') << godzina << ":" << std::setw(2)
+        << std::setfill('0') << minuta << ":" << std::setw(2)
+        << std::setfill('0') << sekunda;
+
+    return out.str();
 }
 
 // <-- Funkcje next_hour(), next_minute() i next_second()
@@ -110,32 +112,24 @@ auto s23575::Czas::time_of_day() const -> Time_of_day
     return pora;
 }
 
-auto s23575::Czas::to_string(Time_of_day pora) const -> std::string
+auto s23575::Czas::to_string(Time_of_day pora) -> std::string
 {
-    auto pora_str = std::string{};
-
     /* Czy jest prosty (automatyczny) sposób na przekonwertowanie poszczególnych
      * typów wyliczeniowych na stringi? Niestety, nic prostszego, niż switch nie
      * udało mi się opracować... */
 
     switch (pora) {
     case Time_of_day::noc:
-        pora_str = "Noc (od 00:00:00 do 06:59:59)";
-        break;
+        return "Noc (od 00:00:00 do 06:59:59)";
     case Time_of_day::rano:
-        pora_str = "Rano (od 07:00:00 do 11:59:59)";
-        break;
+        return "Rano (od 07:00:00 do 11:59:59)";
     case Time_of_day::dzien:
-        pora_str = "Dzień (od 12:00:00 do 18:59:59)";
-        break;
+        return "Dzień (od 12:00:00 do 18:59:59)";
     case Time_of_day::wieczor:
-        pora_str = "Wieczór (od 19:00:00 do 23:59:59)";
-        break;
+        return "Wieczór (od 19:00:00 do 23:59:59)";
     }
 
-    auto out = std::ostringstream{};
-    out << pora_str;
-    return out.str();
+    return {};
 }
 
 // <-- Funkcje artmetyczne dotyczące czasu (s04-data-structures.pdf, s. 27) -->

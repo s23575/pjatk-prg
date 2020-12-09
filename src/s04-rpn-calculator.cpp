@@ -69,7 +69,7 @@ auto evaluate_division_integers(std::stack<double>& stack) -> void
     }
     auto const b = pop_top(stack);
     auto const a = pop_top(stack);
-    int c        = a / b;
+    auto c       = static_cast<int>(a / b);
     stack.push(c);
 }
 

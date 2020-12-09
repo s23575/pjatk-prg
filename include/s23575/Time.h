@@ -28,7 +28,7 @@ struct Czas {
     auto validate_time() -> void;
 
     auto time_of_day() const -> Time_of_day;
-    auto to_string(Time_of_day) const -> std::string;
+    static auto to_string(Time_of_day const) -> std::string;
 
     auto operator+(Czas const&) const -> Czas;
     auto operator-(Czas const&) const -> Czas;

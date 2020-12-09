@@ -87,7 +87,7 @@ auto Division_Integers::evaluate(stack_type& stack) const -> void
     }
     auto const b = pop_top(stack);
     auto const a = pop_top(stack);
-    auto c       = int(a / b);
+    auto c       = static_cast<int>(a / b);
     stack.push(c);
 }
 

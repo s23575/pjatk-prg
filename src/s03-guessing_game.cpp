@@ -1,14 +1,28 @@
 #include <iostream>
+#include <optional>
 #include <random>
 #include <string>
 
-auto ask_user_for_integer(std::string prompt) -> int
+auto ask_user_for_integer(std::string prompt) -> std::optional<int>
 {
-    std::cout << prompt;
     auto liczba = std::string{};
-    std::getline(std::cin, liczba);
 
-    return std::stoi(liczba);
+    for (int i = 0, j = 3; i < j; i++) {
+        std::cout << prompt;
+
+        try {
+            std::getline(std::cin, liczba);
+            return std::stoi(liczba);
+        } catch (std::invalid_argument&) {
+            if (i < j - 1) {  // Poniższy błąd nie powinien być zwracany w
+                              // ostatnim cyklu pętli, stąd ten warunek.
+                std::cerr << "Błąd! Nie podano liczby całkowitej - spróbuj "
+                             "ponownie.\n";
+            }
+        }
+    }
+
+    return std::nullopt;
 }
 
 int main()
@@ -20,48 +34,30 @@ int main()
 
     std::cout << "Zgadnij wylosowaną liczbę całkowitą od 1 do 100!\n";
 
-    auto liczba_uzytkownika   = int{};
-    auto liczba_blednych_prob = int{};
-    auto liczba_prob          = int{};
+    auto liczba_uzytkownika = std::optional<int>{};
 
-    do {
-        try {
-            liczba_uzytkownika = ask_user_for_integer("Podaj liczbę: ");
-        } catch (std::invalid_argument&) {
-            liczba_blednych_prob = liczba_blednych_prob + 1;
-            if (liczba_blednych_prob < 3) {
-                std::cerr << "Błąd! Nie podano liczby całkowitej - spróbuj "
-                             "ponownie.\n";
-                continue;
+    for (int i = 0, j = 100; i < j; i++) {
+        std::cout << "Pozostało " << j - i << " prób.\n";
+
+        liczba_uzytkownika = ask_user_for_integer("Podaj liczbę: ");
+
+        if (not liczba_uzytkownika.has_value()) {
+            std::cerr
+                << "Błąd! Nie podano liczby całkowitej zbyt wiele razy.\n";
+            return 1;
+        } else {
+            if (*liczba_uzytkownika > wylosowana_liczba) {
+                std::cout << "Podana liczba jest za duża!\n";
+            } else if (*liczba_uzytkownika < wylosowana_liczba) {
+                std::cout << "Podana liczba jest za mała!\n";
             } else {
-                std::cerr
-                    << "Błąd! Nie podano liczby całkowitej zbyt wiele razy.\n";
+                std::cout << "Zgadłeś! Wylosowana liczba to: "
+                          << wylosowana_liczba << ".\n";
                 return 0;
             }
         }
-        liczba_blednych_prob = 0;
-
-        if (liczba_uzytkownika > wylosowana_liczba) {
-            std::cout << "Podana liczba jest za duża!\n";
-        } else {
-            if (liczba_uzytkownika < wylosowana_liczba) {
-                std::cout << "Podana liczba jest za mała!\n";
-            }
-        }
-
-        liczba_prob = liczba_prob + 1;
-        if (liczba_prob == 100) {
-            break;
-        }
-
-    } while (liczba_uzytkownika != wylosowana_liczba);
-
-    if (liczba_prob == 100) {
-        std::cout << "Nie udało się - zbyt wiele nieudanych prób.\n";
-    } else {
-        std::cout << "Zgadłeś! Wylosowana liczba to: " << wylosowana_liczba
-                  << ".\n";
     }
 
+    std::cout << "Nie udało się - zbyt wiele nieudanych prób.\n";
     return 0;
 }
