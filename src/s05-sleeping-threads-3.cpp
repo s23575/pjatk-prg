@@ -7,15 +7,11 @@
 
 auto printer(itp::channel<std::string>& ch, int const id) -> void
 {
-    std::string message = ch.wait();
+    auto message = std::string{ch.wait()};
 
     while (not message.empty()) {
         std::cout << "from thread No. " << id << " : " << message << "\n";
-        try {
-            message = ch.wait_for(std::chrono::milliseconds{5000});
-        } catch (itp::timeout_expired_error const&) {
-            // timeout expired, ignore
-        }
+        message = ch.wait();
     }
 
     std::cout << "thread No. " << id << " exiting\n";
@@ -27,14 +23,11 @@ auto main() -> int
 
     auto threads_vector = std::vector<std::thread>();
 
-    auto i = int{0};
-
     const int liczba_watkow = 4;
 
-    for (i = 0; i < liczba_watkow; i++) {
+    for (auto i = int{0}; i < liczba_watkow; i++) {
         threads_vector.push_back(std::thread{printer, std::ref(ch), i});
     }
-
 
     auto message = std::string{};
 
@@ -50,8 +43,8 @@ auto main() -> int
         }
     }
 
-    for (i = 0; i < liczba_watkow; i++) {
-        threads_vector[i].join();
+    for (auto& each : threads_vector) {
+        each.join();
     }
 
     return 0;

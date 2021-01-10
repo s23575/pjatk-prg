@@ -1,6 +1,11 @@
 #ifndef S23575_RPN_CALCULATOR_H
 #define S23575_RPN_CALCULATOR_H
+#define RPN_OP_STRUCT(Op)                                  \
+    struct Op : public Element {                           \
+        auto evaluate(stack_type&) const -> void override; \
+    }
 
+#include <functional>
 #include <memory>
 #include <queue>
 #include <stack>
@@ -22,45 +27,16 @@ struct Literal : public Element {
     Literal(double const);
 };
 
-struct Print : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Addition : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Subtraction : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Multiplication : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Division : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Division_Integers : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Reminder : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Exponentiation : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Square_Root : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
-
-struct Seconds_To_Hours : public Element {
-    auto evaluate(stack_type&) const -> void override;
-};
+RPN_OP_STRUCT(Print);
+RPN_OP_STRUCT(Addition);
+RPN_OP_STRUCT(Subtraction);
+RPN_OP_STRUCT(Multiplication);
+RPN_OP_STRUCT(Division);
+RPN_OP_STRUCT(Division_Integers);
+RPN_OP_STRUCT(Reminder);
+RPN_OP_STRUCT(Exponentiation);
+RPN_OP_STRUCT(Square_Root);
+RPN_OP_STRUCT(Seconds_To_Hours);
 
 struct Calculator {
     stack_type stack;

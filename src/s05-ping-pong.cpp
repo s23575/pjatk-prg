@@ -47,8 +47,8 @@ auto ping_pong(int& liczba,
         // Poniższa funkcja "if" służy zabezpieczeniu, aby ten sam wątek nie
         // "wyprzedzał" drugiego i nie zwracał liczby kilka razy pod rząd - stąd
         // jeżeli liczba jest równa ostatniej, wydrukowanej przez ten wątek
-        // liczbie
-        // ("biezaca_liczba), to pętla jest jednorazowo przerywana ("continue").
+        // liczbie ("biezaca_liczba), to pętla jest jednorazowo przerywana
+        // ("continue").
 
         if (liczba == biezaca_liczba) {
             continue;
@@ -58,19 +58,19 @@ auto ping_pong(int& liczba,
 
         cv.wait(lck);
 
-        liczba = liczba + losowa_liczba(rd);
-
-        if (liczba > 1024) {
-            break;
-        }
-
         std::cout << id << " : " << liczba << "\n";
 
-        biezaca_liczba = liczba;
+        liczba += losowa_liczba(rd);
+
+        cv.notify_one();
 
         lck.unlock();
 
-        cv.notify_one();
+        if (liczba > 1024) {
+            break;
+        } else {
+            biezaca_liczba = liczba;
+        }
     }
 
     koniec++;
@@ -93,11 +93,9 @@ auto main() -> int
 
     std::condition_variable cv;
 
-    auto i = int{};
-
     const int liczba_watkow = 2;
 
-    for (i = 0; i < liczba_watkow; i++) {
+    for (auto i = int{0}; i < liczba_watkow; i++) {
         threads_vector.push_back(std::thread(ping_pong,
                                              std::ref(liczba),
                                              std::ref(mtx),
@@ -114,8 +112,8 @@ auto main() -> int
         if (not liczba_uzytkownika.has_value()) {
             std::cerr
                 << "Błąd! Nie podano liczby całkowitej zbyt wiele razy.\n";
-            for (i = 0; i < liczba_watkow; i++) {
-                threads_vector[i].detach();
+            for (auto j = int{0}; j < liczba_watkow; j++) {
+                threads_vector[j].detach();
             }
             return 1;
         } else {
@@ -127,8 +125,8 @@ auto main() -> int
         cv.notify_one();
     }
 
-    for (i = 0; i < liczba_watkow; i++) {
-        threads_vector[i].join();
+    for (auto& each : threads_vector) {
+        each.join();
     }
 
     return 0;

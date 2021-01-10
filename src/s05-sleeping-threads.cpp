@@ -49,18 +49,18 @@ auto main() -> int
 
     std::mutex mtx;
 
-    auto i = int{};
+    //    auto i = int{};
 
     const int liczba_watkow = 4;
 
-    for (i = 0; i < liczba_watkow; i++) {
+    for (auto i = int{0}; i < liczba_watkow; i++) {
         threads_vector.push_back(std::thread(
             print_stuff_from_queue, std::ref(kolejka), std::ref(mtx), i));
     }
 
-    auto j = int{0};
-
     auto s = std::string{};
+
+    auto j = int{0};
 
     while (j < liczba_watkow) {
         std::getline(std::cin, s);
@@ -75,8 +75,8 @@ auto main() -> int
         }
     }
 
-    for (i = 0; i < liczba_watkow; i++) {
-        threads_vector[i].join();
+    for (auto& each : threads_vector) {
+        each.join();
     }
 
     return 0;

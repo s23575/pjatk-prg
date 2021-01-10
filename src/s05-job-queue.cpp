@@ -41,24 +41,22 @@ auto main() -> int
 
     std::mutex mtx;
 
-    auto i = int{};
-
     const int liczba_elementow = 40;
     const int liczba_watkow    = 4;
 
-    for (i = 0; i < liczba_elementow; i++) {
+    for (auto i = int{0}; i < liczba_elementow; i++) {
         auto s = std::string{"queue element No. "} + std::to_string(i);
 
         kolejka.push(s);
     }
 
-    for (i = 0; i < liczba_watkow; i++) {
+    for (auto j = int{0}; j < liczba_watkow; j++) {
         threads_vector.push_back(std::thread(
-            print_stuff_from_queue, std::ref(kolejka), std::ref(mtx), i));
+            print_stuff_from_queue, std::ref(kolejka), std::ref(mtx), j));
     }
 
-    for (i = 0; i < liczba_watkow; i++) {
-        threads_vector[i].join();
+    for (auto& each : threads_vector) {
+        each.join();
     }
 
     return 0;

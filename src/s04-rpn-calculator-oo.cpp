@@ -6,13 +6,13 @@
 
 #include <algorithm>
 #include <cmath>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <stack>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
 
 static auto pop_top(std::stack<double>& stack) -> double
 {
@@ -40,93 +40,101 @@ auto Print::evaluate(stack_type& stack) const -> void
     std::cout << stack.top() << "\n";
 }
 
-auto Addition::evaluate(stack_type& stack) const -> void
+auto evaluate_binary_op(stack_type& stack,
+                        std::function<double(double, double)> op,
+                        std::string op_name) -> void
 {
     if (stack.size() < 2) {
-        throw std::logic_error{"not enough operands for +"};
+        throw std::logic_error{"not enough operands for " + op_name};
     }
+
     auto const b = pop_top(stack);
     auto const a = pop_top(stack);
-    stack.push(a + b);
+
+    stack.push(op(a, b));
+}
+
+auto evaluate_binary_op(stack_type& stack,
+                        std::function<double(double)> op,
+                        std::string op_name) -> void
+{
+    if (stack.size() < 1) {
+        throw std::logic_error{"not enough operands for " + op_name};
+    }
+
+    auto const a = pop_top(stack);
+
+    stack.push(op(a));
+}
+
+auto Addition::evaluate(stack_type& stack) const -> void
+{
+    evaluate_binary_op(stack, std::plus<>(), "+");
 }
 
 auto Subtraction::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 2) {
-        throw std::logic_error{"not enough operands for -"};
-    }
-    auto const b = pop_top(stack);
-    auto const a = pop_top(stack);
-    stack.push(a - b);
+    evaluate_binary_op(stack, std::minus<>(), "-");
 }
 
 auto Multiplication::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 2) {
-        throw std::logic_error{"not enough operands for *"};
-    }
-    auto const b = pop_top(stack);
-    auto const a = pop_top(stack);
-    stack.push(a * b);
+    evaluate_binary_op(stack, std::multiplies<>(), "*");
 }
 
 auto Division::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 2) {
-        throw std::logic_error{"not enough operands for /"};
-    }
-    auto const b = pop_top(stack);
-    auto const a = pop_top(stack);
-    stack.push(a / b);
+    evaluate_binary_op(stack, std::divides<>(), "/");
 }
+
+
+// Nie jestem pewien, który zapis dodatkowej funkcji jest lepszy/preferowany -
+// poniższy, z odrębną definicją pożądanej funkcji, czy zastosowany dalej, przy
+// wykorzystaniu std::function.
+
+/*
+auto div_int(double a, double b) -> double
+{
+    auto c = static_cast<int>(a / b);
+    return c;
+}
+*/
 
 auto Division_Integers::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 2) {
-        throw std::logic_error{"not enough operands for //"};
-    }
-    auto const b = pop_top(stack);
-    auto const a = pop_top(stack);
-    auto c       = static_cast<int>(a / b);
-    stack.push(c);
+    std::function<double(double, double)> div_int = [](double a, double b) {
+        return static_cast<int>(a / b);
+    };
+    evaluate_binary_op(stack, div_int, "//");
 }
 
 auto Reminder::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 2) {
-        throw std::logic_error{"not enough operands for %"};
-    }
-    auto const b = pop_top(stack);
-    auto const a = pop_top(stack);
-    stack.push(fmod(a, b));
+    evaluate_binary_op(stack, fmod, "%");
 }
 
 auto Exponentiation::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 2) {
-        throw std::logic_error{"not enough operands for **"};
-    }
-    auto const b = pop_top(stack);
-    auto const a = pop_top(stack);
-    stack.push(pow(a, b));
+    evaluate_binary_op(stack, pow, "**");
 }
 
 auto Square_Root::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 1) {
-        throw std::logic_error{"not enough operands for sqrt"};
-    }
-    auto const a = pop_top(stack);
-    stack.push(sqrt(a));
+    evaluate_binary_op(stack, sqrt, "sqrt");
 }
+
+/*
+auto sec_to_h(double a) -> double
+{
+    auto c = a / 3600;
+    return c;
+}
+*/
 
 auto Seconds_To_Hours::evaluate(stack_type& stack) const -> void
 {
-    if (stack.size() < 1) {
-        throw std::logic_error{"not enough operands for h"};
-    }
-    auto const a = pop_top(stack);
-    stack.push(a / 3600);
+    std::function<double(double)> sec_to_h = [](double a) { return a / 3600; };
+    evaluate_binary_op(stack, sec_to_h, "h");
 }
 
 Calculator::Calculator(stack_type s) : stack{std::move(s)}
