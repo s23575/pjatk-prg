@@ -44,3 +44,5 @@ build/%.bin: build/%.o
 
 build/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+

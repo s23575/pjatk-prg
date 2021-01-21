@@ -1,39 +1,38 @@
-/*#include <cmath>
-#include <functional>
+#include <algorithm>
+#include <cmath>
 #include <iostream>
-
-auto dzialanie(int liczba1, int liczba2, std::function<int(int,int)> funkcja) ->
-void
-{
-    std::cout << funkcja(liczba1, liczba2) << "\n";
-}
+#include <iterator>
+#include <string>
+#include <vector>
 
 auto main() -> int
 {
-    dzialanie(1,2, std::pow());
-    return 0;
-}*/
+    auto macierz_dane =
+        std::vector<int>{3, -2, 0, 5, -2, 1, -2, 0, 0, -2, 5, 3, 5, 2, 0, 4};
 
-#include <cmath>
-#include <functional>
-#include <iostream>
-#include <optional>
+    auto macierz = std::vector<std::vector<int>>{};
 
-auto test(double a, double b) -> double
-{
-    return a + b;
-}
+    auto licznik = int(sqrt(macierz_dane.size()));
 
-auto test_funkcja(double a,
-                  double b,
-                  std::function<double(double, double)> funkcja) -> void
-{
-    std::cout << funkcja(a, b);
-}
+    for (auto i = int{0}; i < licznik; i++) {
+        auto wiersz = std::vector<int>{};
 
-int main()
-{
-    test_funkcja(5, 6, test);
+        std::cout << "kopiuj jeden\n";
+
+        std::copy(macierz_dane.begin() + (i * licznik),
+                  macierz_dane.begin() + ((i + 1) * licznik),
+                  std::back_inserter(wiersz));
+
+        macierz.push_back(wiersz);
+    }
+
+    for (auto n : macierz) {
+        for (auto x : n) {
+            std::cout << x << ", ";
+        }
+
+        std::cout << macierz.size() << "\n";
+    }
 
     return 0;
 }

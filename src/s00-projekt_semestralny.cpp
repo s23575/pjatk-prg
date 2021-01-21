@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -43,10 +45,30 @@ auto oblicz_wyznacznik(std::vector<std::vector<int>> macierz) -> int
 
 auto main() -> int
 {
-    auto macierz = std::vector<std::vector<int>>{
-        {3, -2, 0, 5}, {-2, 1, -2, 0}, {0, -2, 5, 3}, {5, 2, 0, 4}};
+    auto macierz_dane =
+        std::vector<int>{3, -2, 0, 5, -2, 1, -2, 0, 0, -2, 5, 3, 5, 2, 0, 4};
 
-    std::cout << oblicz_wyznacznik(macierz) << "\n";
+    auto macierz = std::vector<std::vector<int>>{{}};
 
-    return 0;
+    auto licznik = int(sqrt(macierz_dane.size());
+
+                       for (auto i = int{0}; i < licznik; i++) {
+                           auto wiersz = std::vector<int>{};
+
+                           std::copy(macierz_dane[i * licznik],
+                                     macierz_dane[(i++) * licznik],
+                                     std::back_inserter(wiersz));
+
+                           macierz.push_back(wiersz);
+                       })
+}
+
+auto macierz = std::vector<std::vector<int>>{{3, -2, 0, 5},
+                                             {-2, 1, -2, 0},
+                                             {0, -2, 5, 3},
+                                             {5, 2, 0, 4}};
+
+std::cout << oblicz_wyznacznik(macierz) << "\n";
+
+return 0;
 }
