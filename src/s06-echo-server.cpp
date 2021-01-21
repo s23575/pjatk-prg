@@ -71,14 +71,9 @@ auto klient(std::string buf2) -> std::string
 
     auto server_sock =
         connect(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
-
-
-    while (server_sock == -1) {
-        server_sock =
-            connect(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+    if (server_sock == -1) {
+        perror("connect(2)");
     }
-    //        perror("connect(2)");
-
 
     auto n = write(sock, &buf2[0], buf2.size());
     if (n == -1) {
