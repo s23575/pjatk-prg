@@ -1,21 +1,23 @@
 #include <arpa/inet.h>
-#include <fcntl.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 #include <iostream>
 #include <string>
+#include <vector>
 
-auto serwer() -> std::string
+auto main() -> int
 {
-    auto sock = socket(AF_INET, SOCK_STREAM, 0);
+    auto client_sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    auto const ip = std::string{"127.0.0.1"};
+    auto const ip   = std::string{"127.0.0.1"};
+    auto const port = uint16_t{8080};
 
-    auto const port = uint16_t{8181};
+    {
+        auto const opt = int{1};
+        setsockopt(client_sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+        setsockopt(client_sock, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+    }
 
     sockaddr_in addr;
 
@@ -24,126 +26,34 @@ auto serwer() -> std::string
     addr.sin_port   = htobe16(port);
     inet_pton(addr.sin_family, ip.c_str(), &addr.sin_addr);
 
-    const int opt = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
+    auto const m =
+        connect(client_sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+    if (m == -1) {
+        perror("connect(2) ");
+    } else {
+        std::cout << "connected to " << ip << ": " << port << "\n";
 
-    bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+        while (true) {
+            auto buf = std::string{};
+            std::cout << "send to server : ";
+            std::getline(std::cin, buf);
+            buf.append("\n");
 
-    listen(sock, SOMAXCONN);
+            write(client_sock, buf.data(), buf.size());
 
-    auto client_sock = accept(sock, nullptr, nullptr);
+            auto buf2     = std::string{};
+            auto wielkosc = int{4096};
+            buf2.resize(wielkosc);
 
-    auto wielkosc = int{1024};
-    auto buf      = std::string{};
-    buf.resize(wielkosc);
+            auto const n = read(client_sock, buf2.data(), buf2.size());
+            std::cout << "got from server"
+                      << " : "
+                      << std::string{buf2.data(), static_cast<size_t>(n)};
+        }
 
-    auto n = read(client_sock, &buf[0], buf.size());
-    if (n == -1) {
-        perror("read(2)");
+        shutdown(client_sock, SHUT_RDWR);
+        close(client_sock);
     }
-
-    shutdown(sock, SHUT_RDWR);
-
-    close(sock);
-
-    return buf;
-}
-
-auto klient(std::string buf2) -> std::string
-{
-    auto sock = socket(AF_INET, SOCK_STREAM, 0);
-
-    auto const ip = std::string{"127.0.0.1"};
-
-    auto const port = uint16_t{8080};
-
-    sockaddr_in addr;
-
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port   = htobe16(port);
-    inet_pton(addr.sin_family, ip.c_str(), &addr.sin_addr);
-
-    const int opt = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-
-    auto server_sock =
-        connect(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
-    if (server_sock == -1) {
-        perror("connect(2)");
-    }
-
-    auto n = write(sock, &buf2[0], buf2.size());
-    if (n == -1) {
-        perror("write(2)");
-    }
-
-    shutdown(sock, SHUT_RDWR);
-
-    close(sock);
-
-    return buf2;
-}
-
-auto main() -> int
-{
-    auto str = std::string{};
-
-    std::cout << "Wiadomość do wysłania: ";
-
-    std::getline(std::cin, str);
-
-    klient(str);
-
-    std::cout << "Odebrano wiadomość: " << serwer() << "\n";
 
     return 0;
 }
-
-/* <---
-
-auto main() -> int
-{
-// < -- Klient -->
-
-    auto sock = socket(AF_INET, SOCK_STREAM, 0);
-
-    auto const ip = std::string{"127.0.0.1"};
-
-    auto const port = uint16_t{8080};
-
-    sockaddr_in addr;
-
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_port = htobe16(port);
-    inet_pton(addr.sin_family, ip.c_str(), &addr.sin_addr);
-
-    const int opt = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt));
-
-    auto server_sock = connect(sock,
-reinterpret_cast<sockaddr*>(&addr),sizeof(addr)); if (server_sock == -1) {
-        perror("connect(2)");
-        return 1;
-    }
-
-    auto buf = std::string{};
-    std::cout << "Wiadomość do wysłania: ";
-    std::getline(std::cin,buf);
-
-    auto n = write(sock, &buf[0], buf.size());
-    if ( n == -1) {
-        perror("write(2)");
-    }
-
-    shutdown(sock, SHUT_RDWR);
-
-    close(sock);
-
-    return 0;
-}
----> */

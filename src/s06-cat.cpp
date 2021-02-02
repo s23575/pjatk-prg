@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     buf.resize(info.st_size);
     auto const n = read(fd, &buf[0], buf.size());
 
-    if (n == 1) {
+    if (n == -1) {
         perror("read(2)");
     }
 

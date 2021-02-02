@@ -45,30 +45,29 @@ auto oblicz_wyznacznik(std::vector<std::vector<int>> macierz) -> int
 
 auto main() -> int
 {
-    auto macierz_dane =
-        std::vector<int>{3, -2, 0, 5, -2, 1, -2, 0, 0, -2, 5, 3, 5, 2, 0, 4};
+    /* auto macierz_dane =
+            std::vector<int>{3, -2, 0, 5, -2, 1, -2, 0, 0, -2, 5, 3, 5, 2, 0,
+    4};
 
-    auto macierz = std::vector<std::vector<int>>{{}};
+        auto macierz = std::vector<std::vector<int>>{{}};
 
-    auto licznik = int(sqrt(macierz_dane.size());
+        auto licznik = int(sqrt(macierz_dane.size());
 
-                       for (auto i = int{0}; i < licznik; i++) {
-                           auto wiersz = std::vector<int>{};
+                           for (auto i = int{0}; i < licznik; i++) {
+                               auto wiersz = std::vector<int>{};
 
-                           std::copy(macierz_dane[i * licznik],
-                                     macierz_dane[(i++) * licznik],
-                                     std::back_inserter(wiersz));
+                               std::copy(macierz_dane[i * licznik],
+                                         macierz_dane[(i++) * licznik],
+                                         std::back_inserter(wiersz));
 
-                           macierz.push_back(wiersz);
-                       })
-}
+                               macierz.push_back(wiersz);
+                           })
+    }
+    */
+    auto macierz = std::vector<std::vector<int>>{
+        {0, 0, -1, 5}, {0, 3, 1, 4}, {12, 0, 0, -2}, {4, 0, 15, 0}};
 
-auto macierz = std::vector<std::vector<int>>{{3, -2, 0, 5},
-                                             {-2, 1, -2, 0},
-                                             {0, -2, 5, 3},
-                                             {5, 2, 0, 4}};
+    std::cout << oblicz_wyznacznik(macierz) << "\n";
 
-std::cout << oblicz_wyznacznik(macierz) << "\n";
-
-return 0;
+    return 0;
 }

@@ -1,10 +1,10 @@
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
-//#include <fcntl.h>
 //#include <sys/socket.h>
-//#include <sys/stat.h>
 //#include <sys/types.h>
 //#include <sys/select.h>
 //#include <errno.h>
@@ -13,6 +13,42 @@
 #include <iostream>
 #include <string>
 #include <vector>
+
+auto open_and_send_file(std::string nazwa_pliku) -> std::string
+{
+    auto zawartosc = std::string{};
+
+    nazwa_pliku.pop_back();
+
+    auto fd = open(nazwa_pliku.c_str(), O_RDWR, S_IRUSR | S_IWUSR);
+    if (fd == -1) {
+        perror("open(2) ");
+    } else {
+        struct stat info;
+        memset(&info, 0, sizeof(info));
+        auto const r = fstat(fd, &info);
+
+        if (r == -1) {
+            perror("fstat(2) ");
+        } else {
+            auto buf = std::string{};
+            buf.resize(info.st_size);
+            auto const n = read(fd, buf.data(), buf.size());
+
+            if (n == -1) {
+                perror("read(2) ");
+            } else {
+                close(fd);
+                zawartosc = nazwa_pliku;
+                zawartosc.append("\n");
+                zawartosc.append(buf);
+                zawartosc.append("\n");
+            }
+        }
+    }
+
+    return zawartosc;
+}
 
 auto main_loop(int const server_sock) -> void
 {
@@ -58,7 +94,15 @@ auto main_loop(int const server_sock) -> void
             } else {
                 std::cout << "got from client No. " << clients[i] << " : "
                           << std::string{buf.data(), static_cast<size_t>(n)};
-                write(clients[i], buf.data(), buf.size());
+
+                auto zawartosc_pliku =
+                    std::string{open_and_send_file(buf.data())};
+
+                if (zawartosc_pliku.size() == 0) {
+                    zawartosc_pliku = ":-(\n";
+                }
+                write(
+                    clients[i], zawartosc_pliku.data(), zawartosc_pliku.size());
             }
         }
 

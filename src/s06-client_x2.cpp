@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+//#include <sys/select.h>
 #include <unistd.h>
 
 #include <iostream>
@@ -43,18 +44,18 @@ auto main() -> int
     if (n == -1) {
         perror("write(2)");
     }
+    /*
+        auto wielkosc = int{1024};
+        auto resp     = std::string{};
+        resp.resize(wielkosc);
 
-    auto wielkosc = int{1024};
-    auto resp     = std::string{};
-    resp.resize(wielkosc);
+        auto o = read(server_sock, &resp[0], resp.size());
+        if (o == -1) {
+            perror("read(2)");
+        }
 
-    auto o = read(server_sock, &resp[0], resp.size());
-    if (o == -1) {
-        perror("read(2)");
-    }
-
-    std::cout << "Wiadomość odebrana: " << resp << "\n";
-
+        std::cout << "Wiadomość odebrana: " << resp << "\n";
+    */
     shutdown(sock, SHUT_RDWR);
 
     close(sock);

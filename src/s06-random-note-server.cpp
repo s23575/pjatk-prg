@@ -11,12 +11,27 @@
 //#include <stdio.h>
 
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
+
+auto losowa_wiadomosc(std::vector<std::string> const wiadomosci,
+                      int const wiadomosci_wielkosc) -> std::string
+{
+    std::random_device rd;
+    std::uniform_int_distribution<int> losowa_liczba(0, wiadomosci_wielkosc);
+
+    auto const wylosowana_liczba = losowa_liczba(rd);
+
+    auto wiadomosc = std::string{wiadomosci[wylosowana_liczba]};
+
+    return wiadomosc;
+}
 
 auto main_loop(int const server_sock) -> void
 {
     auto clients = std::vector<int>{};
+    auto msg     = std::vector<std::string>{};
 
     // Ograniczenie czasowe, żeby serwer nie działał bez końca (limit ustawiony
     // na 30 sek.).
@@ -58,7 +73,12 @@ auto main_loop(int const server_sock) -> void
             } else {
                 std::cout << "got from client No. " << clients[i] << " : "
                           << std::string{buf.data(), static_cast<size_t>(n)};
-                write(clients[i], buf.data(), buf.size());
+                msg.push_back(buf.data());
+
+                auto wiadomosc =
+                    std::string{losowa_wiadomosc(msg, msg.size() - 1)};
+
+                write(clients[i], wiadomosc.data(), wiadomosc.size());
             }
         }
 
