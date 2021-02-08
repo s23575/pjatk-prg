@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+
+/*
 auto oblicz_wyznacznik(std::vector<std::vector<int>> macierz) -> int
 {
     auto wyznacznik = int{};
@@ -42,32 +44,62 @@ auto oblicz_wyznacznik(std::vector<std::vector<int>> macierz) -> int
 
     return wyznacznik;
 }
-
+*/
 auto main() -> int
 {
-    /* auto macierz_dane =
-            std::vector<int>{3, -2, 0, 5, -2, 1, -2, 0, 0, -2, 5, 3, 5, 2, 0,
-    4};
+    auto macierz_dane =
+        std::vector<int>{1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4};
 
-        auto macierz = std::vector<std::vector<int>>{{}};
+    auto macierz_1 = std::vector<std::vector<int>>{};
+    auto macierz_2 = std::vector<std::vector<int>>{};
 
-        auto licznik = int(sqrt(macierz_dane.size());
+    auto licznik = int(sqrt(macierz_dane.size()));
 
-                           for (auto i = int{0}; i < licznik; i++) {
-                               auto wiersz = std::vector<int>{};
+    for (auto i = int{0}; i < licznik; i++) {
+        //        auto wiersz = std::vector<int>{macierz_dane.begin() + (i *
+        //        licznik), macierz_dane.begin() + ((i * licznik) + licznik)};
 
-                               std::copy(macierz_dane[i * licznik],
-                                         macierz_dane[(i++) * licznik],
-                                         std::back_inserter(wiersz));
+        auto wiersz_1 = std::vector<int>{
+            &macierz_dane[i * licznik], &macierz_dane[(i * licznik) + licznik]};
 
-                               macierz.push_back(wiersz);
-                           })
+        macierz_1.push_back(wiersz_1);
     }
-    */
-    auto macierz = std::vector<std::vector<int>>{
-        {0, 0, -1, 5}, {0, 3, 1, 4}, {12, 0, 0, -2}, {4, 0, 15, 0}};
 
-    std::cout << oblicz_wyznacznik(macierz) << "\n";
+    for (auto each_1 : macierz_1) {
+        for (auto each_2 : each_1) {
+            std::cout << "| " << each_2 << "\t";
+        }
 
+        std::cout << " |\n";
+    }
+
+    for (auto j = int{0}; j < licznik; j++) {
+        auto wiersz_2 = std::vector<int>{};
+
+        for (auto each_1 : macierz_1) {
+            wiersz_2.push_back(each_1[j]);
+        }
+
+        macierz_2.push_back(wiersz_2);
+    }
+
+    std::cout << "transponowana:\n";
+
+    for (auto each_1 : macierz_2) {
+        for (auto each_2 : each_1) {
+            std::cout << "| " << each_2 << "\t";
+        }
+
+        std::cout << " |\n";
+    }
+
+    std::cout << "\033[1;31mtestowy\033[0m\n";
+
+    /*
+       auto macierz = std::vector<std::vector<int>>{
+           {0, 0, -1, 5}, {0, 3, 1, 4}, {12, 0, 0, -2}, {4, 0, 15, 0}};
+
+       std::cout << oblicz_wyznacznik(macierz) << "\n";
+   */
     return 0;
 }
