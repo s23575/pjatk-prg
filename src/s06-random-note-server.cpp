@@ -10,16 +10,16 @@
 //#include <errno.h>
 //#include <stdio.h>
 
+#include <chrono>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
 
-auto losowa_wiadomosc(std::vector<std::string> const wiadomosci,
-                      int const wiadomosci_wielkosc) -> std::string
+auto losowa_wiadomosc(std::vector<std::string> const wiadomosci) -> std::string
 {
     std::random_device rd;
-    std::uniform_int_distribution<int> losowa_liczba(0, wiadomosci_wielkosc);
+    std::uniform_int_distribution<int> losowa_liczba(0, wiadomosci.size() - 1);
 
     auto const wylosowana_liczba = losowa_liczba(rd);
 
@@ -36,11 +36,22 @@ auto main_loop(int const server_sock) -> void
     // Ograniczenie czasowe, żeby serwer nie działał bez końca (limit ustawiony
     // na 30 sek.).
 
-    auto koniec_czasu = time_t{};
-    auto czas_sek     = int{30};
-    koniec_czasu      = time(NULL) + czas_sek;
+    auto poczatek_czasu = std::chrono::steady_clock::now();
+    auto i              = int{30};
 
-    while (time(NULL) < koniec_czasu) {
+    while (true) {
+        auto biezacy_czas = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(biezacy_czas
+                                                             - poczatek_czasu)
+                .count()
+            >= i) {
+            if (clients.size() > 0) {
+                i += 30;
+            } else {
+                break;
+            }
+        }
+
         auto client_sock =
             accept4(server_sock, nullptr, nullptr, SOCK_NONBLOCK);
 
@@ -75,18 +86,10 @@ auto main_loop(int const server_sock) -> void
                           << std::string{buf.data(), static_cast<size_t>(n)};
                 msg.push_back(buf.data());
 
-                auto wiadomosc =
-                    std::string{losowa_wiadomosc(msg, msg.size() - 1)};
+                auto wiadomosc = std::string{losowa_wiadomosc(msg)};
 
                 write(clients[i], wiadomosc.data(), wiadomosc.size());
             }
-        }
-
-        // Jeżeli klienci są podłączeni, czas działania serwera się zwiększa (o
-        // kolejne 30 sek.).
-
-        if (clients.size() > 0) {
-            koniec_czasu = time(NULL) + czas_sek;
         }
     }
 }

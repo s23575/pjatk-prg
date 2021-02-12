@@ -10,11 +10,12 @@
 //#include <errno.h>
 //#include <stdio.h>
 
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <vector>
 
-auto open_and_send_file(std::string nazwa_pliku) -> std::string
+auto open_and_read_file(std::string nazwa_pliku) -> std::string
 {
     auto zawartosc = std::string{};
 
@@ -57,11 +58,22 @@ auto main_loop(int const server_sock) -> void
     // Ograniczenie czasowe, żeby serwer nie działał bez końca (limit ustawiony
     // na 30 sek.).
 
-    auto koniec_czasu = time_t{};
-    auto czas_sek     = int{30};
-    koniec_czasu      = time(NULL) + czas_sek;
+    auto poczatek_czasu = std::chrono::steady_clock::now();
+    auto i              = int{30};
 
-    while (time(NULL) < koniec_czasu) {
+    while (true) {
+        auto biezacy_czas = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(biezacy_czas
+                                                             - poczatek_czasu)
+                .count()
+            >= i) {
+            if (clients.size() > 0) {
+                i += 30;
+            } else {
+                break;
+            }
+        }
+
         auto client_sock =
             accept4(server_sock, nullptr, nullptr, SOCK_NONBLOCK);
 
@@ -95,8 +107,7 @@ auto main_loop(int const server_sock) -> void
                 std::cout << "got from client No. " << clients[i] << " : "
                           << std::string{buf.data(), static_cast<size_t>(n)};
 
-                auto zawartosc_pliku =
-                    std::string{open_and_send_file(buf.data())};
+                auto zawartosc_pliku = open_and_read_file(buf.data());
 
                 if (zawartosc_pliku.size() == 0) {
                     zawartosc_pliku = ":-(\n";
@@ -104,13 +115,6 @@ auto main_loop(int const server_sock) -> void
                 write(
                     clients[i], zawartosc_pliku.data(), zawartosc_pliku.size());
             }
-        }
-
-        // Jeżeli klienci są podłączeni, czas działania serwera się zwiększa (o
-        // kolejne 30 sek.).
-
-        if (clients.size() > 0) {
-            koniec_czasu = time(NULL) + czas_sek;
         }
     }
 }

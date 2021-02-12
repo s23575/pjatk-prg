@@ -1,6 +1,5 @@
 #include <s23575/Time.h>
 
-#include <iomanip>
 #include <iostream>
 
 // <-- Konstruktor -->
@@ -19,7 +18,7 @@ s23575::Czas::Czas(int const g, int const m, int const s)
  * oraz gdy są one wartościami ujemnymi (przykładowo: 2 minuty i -1 sekunda
  * zostanie przekształcone na 1 minutę i 59 sekund) */
 
-auto s23575::Czas::validate_time() -> void
+auto s23575::Czas::validate_time() -> int
 {
     auto zwieksz = int{};
     if (sekunda >= 60) {
@@ -47,6 +46,8 @@ auto s23575::Czas::validate_time() -> void
     } else if (godzina < 0) {
         godzina = 24 + godzina;
     }
+
+    return 0;
 }
 
 // <-- Funkcja to_string() (s04-data-structures.pdf, s. 25) -->
@@ -55,9 +56,23 @@ auto s23575::Czas::to_string() const -> std::string
 {
     auto out = std::ostringstream{};
 
-    out << std::setw(2) << std::setfill('0') << godzina << ":" << std::setw(2)
-        << std::setfill('0') << minuta << ":" << std::setw(2)
-        << std::setfill('0') << sekunda;
+    if (godzina < 10) {
+        out << "0";
+    }
+
+    out << godzina << ":";
+
+    if (minuta < 10) {
+        out << "0";
+    }
+
+    out << minuta << ":";
+
+    if (sekunda < 10) {
+        out << "0";
+    }
+
+    out << sekunda;
 
     return out.str();
 }
@@ -112,24 +127,32 @@ auto s23575::Czas::time_of_day() const -> Time_of_day
     return pora;
 }
 
-auto s23575::Czas::to_string(Time_of_day pora) -> std::string
+auto s23575::Czas::to_string(Time_of_day pora) const -> std::string
 {
+    auto pora_str = std::string{};
+
     /* Czy jest prosty (automatyczny) sposób na przekonwertowanie poszczególnych
      * typów wyliczeniowych na stringi? Niestety, nic prostszego, niż switch nie
      * udało mi się opracować... */
 
     switch (pora) {
     case Time_of_day::noc:
-        return "Noc (od 00:00:00 do 06:59:59)";
+        pora_str = "Noc (od 00:00:00 do 06:59:59)";
+        break;
     case Time_of_day::rano:
-        return "Rano (od 07:00:00 do 11:59:59)";
+        pora_str = "Rano (od 07:00:00 do 11:59:59)";
+        break;
     case Time_of_day::dzien:
-        return "Dzień (od 12:00:00 do 18:59:59)";
+        pora_str = "Dzień (od 12:00:00 do 18:59:59)";
+        break;
     case Time_of_day::wieczor:
-        return "Wieczór (od 19:00:00 do 23:59:59)";
+        pora_str = "Wieczór (od 19:00:00 do 23:59:59)";
+        break;
     }
 
-    return {};
+    auto out = std::ostringstream{};
+    out << pora_str;
+    return out.str();
 }
 
 // <-- Funkcje artmetyczne dotyczące czasu (s04-data-structures.pdf, s. 27) -->
@@ -141,7 +164,7 @@ auto s23575::Czas::operator+(Czas const& druga_godzina) const -> Czas
      * (gdy ich wartości są zbyt duże lub ujemne) odpowiada funkcja
      * validate_time() */
 
-    auto czas_wynik = s23575::Czas{godzina + druga_godzina.godzina,
+    auto czas_wynik = s23575::Czas{*this.godzina + druga_godzina.godzina,
                                    minuta + druga_godzina.minuta,
                                    sekunda + druga_godzina.sekunda};
 
@@ -209,7 +232,14 @@ auto s23575::Czas::operator==(Czas const& druga_godzina) const -> bool
 
 auto s23575::Czas::operator!=(Czas const& druga_godzina) const -> bool
 {
-    return not(*this == druga_godzina);
+    auto wynik_porownania = bool{};
+
+    if (godzina != druga_godzina.godzina || minuta != druga_godzina.minuta
+        || sekunda != druga_godzina.sekunda) {
+        wynik_porownania = true;
+    }
+
+    return wynik_porownania;
 }
 
 // <-- Funkcje count_seconds(), count_minutes() i time_to_midnight()

@@ -5,27 +5,19 @@
 
 namespace s23575 {
 
-struct Element_Macierzy {
-    constexpr static int WIERSZ = 0;
-    int wiersz{WIERSZ};
-    constexpr static int KOLUMNA = 0;
-    int kolumna{KOLUMNA};
-    constexpr static int WARTOSC = 0;
-    int wartosc{wartosc};
-
-    Element_Macierzy(int const = WIERSZ,
-                     int const = KOLUMNA,
-                     int const = WARTOSC);
-};
-
 struct Macierz {
-    std::vector<Element_Macierzy> zawartosc;
-    constexpr static int WIELKOSC = 0;
-    int wielkosc{WIELKOSC};
+    std::vector<int> elementy;
+    constexpr static int ROZMIAR = 0;
+    int rozmiar{ROZMIAR};
+    constexpr static size_t ROZMIAR_ELEMENTU = 0;
+    size_t rozmiar_elementu{ROZMIAR_ELEMENTU};
 
-    Macierz(std::vector<Element_Macierzy>, int const = WIELKOSC);
+    Macierz(std::vector<int>,
+            int const    = ROZMIAR,
+            size_t const = ROZMIAR_ELEMENTU);
 
-    auto drukuj_macierz(Macierz) const -> void;
+    auto drukuj_macierz() -> void;
+    auto oblicz_wyznacznik() const -> int;
 };
 
 }  // namespace s23575
