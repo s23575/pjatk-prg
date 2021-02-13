@@ -163,12 +163,14 @@ auto oblicz_wyznacznik(const std::vector<int>& macierz_dane,
             // Poniżej wyliczana jest wartość, zgodnie z wzorem na rozwinięcie
             // Laplace’a – suma tych wartości stanowi wyznacznik danej macierzy.
             if (macierz[wiersz][i] != 0) {
+
                 lista_dzialan
                     << "((-1)^(" << wiersz + 1 << "+" << i + 1 << ") * "
                     << drukuj_element(macierz[wiersz][i]).str() << " * ";
                 if (macierz_mniejsza_rozmiar != 1) {
                     lista_dzialan << "(";
                 }
+
                 wyznacznik += pow((-1), (wiersz + 1) + (i + 1))
                               * macierz[wiersz][i]
                               * oblicz_wyznacznik(macierz_mniejsza_dane,
@@ -178,11 +180,12 @@ auto oblicz_wyznacznik(const std::vector<int>& macierz_dane,
                 if (macierz_mniejsza_rozmiar != 1) {
                     lista_dzialan << ")";
                 }
+
                 lista_dzialan << ")";
             }
 
             if (i != macierz_rozmiar - 1) {
-                lista_dzialan << " +";
+                lista_dzialan << " + ";
             }
         }
     }
@@ -312,7 +315,7 @@ auto main(int argc, char* argv[]) -> int
                 drukuj_macierz(
                     macierz_dane, macierz_rozmiar, najwiekszy_rozmiar_elementu);
                 if (static_cast<int>(i % macierz_rozmiar) == 0) {
-                    std::cout << " |  ";
+                    std::cout << "|  ";
                 }
                 std::getline(std::cin, wpisana_wartosc);
                 try {
